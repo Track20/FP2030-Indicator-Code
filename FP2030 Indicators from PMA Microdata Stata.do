@@ -35,17 +35,17 @@ replace method= "OMM"   if  current_methodnum_rc==8 | current_methodnum_rc==11 |
                                                      
                                                       
 gen told_se=1 if fp_side_effects==1 
-replace told_se=0 if fp_side_effects!=1 
+replace told_se=0 if fp_side_effects!=1 & fp_side_effects!=.
 
 gen told_todo_se=1 if fp_side_effects==1 & fp_side_effects_instructions==1
 replace told_todo_se =0 if   fp_side_effects==1 & fp_side_effects_instructions==0
-replace told_todo_se =0 if  fp_side_effects!=1
+replace told_todo_se =0 if  fp_side_effects!=1 & fp_side_effects!=.
  
 gen told_om = 1 if fp_told_other_methods==1
-replace  told_om = 0 if fp_told_other_methods!=1
+replace  told_om = 0 if fp_told_other_methods!=1 & fp_told_other_methods!=.
 
 gen told_switch=1 if fp_told_switch==1 
-replace told_switch=0 if fp_told_switch!=1 
+replace told_switch=0 if fp_told_switch!=1 &  fp_told_switch!=.
 
 gen mii=1 if told_se==1 & told_todo_se==1 & told_om==1
 replace mii=0 if told_se!=1 | told_todo_se!=1 | told_om!=1 

@@ -51,14 +51,14 @@ replace method = "OMM" if   v312==16 | v312==17
 *v3a02 v3a04 (only if v3a02 is yes) v3a05
 
 gen told_se=1 if v3a02==1 
-replace told_se=0 if v3a02!=1 
+replace told_se=0 if v3a02!=1 & v3a02!=.
 
 gen told_todo_se=1 if v3a02==1 & v3a04==1
 replace told_todo_se=0 if  v3a02==1 & v3a04==0
-replace told_todo_se=0 if  v3a02!=1 
+replace told_todo_se=0 if  v3a02!=1  & v3a02!=.
                                   
 gen told_om= 1 if 	v3a05==1
-replace told_om=0 if v3a05!=1					  
+replace told_om=0 if v3a05!=1	 & v3a05!=.							  
                                       
 gen mii=1 if told_se==1 & told_todo_se==1 & told_om==1			
 replace mii=0 if told_se!=1 | told_todo_se!=1 | told_om!=1			  
