@@ -12,7 +12,7 @@ library(questionr)
 
 women <- read_dta("C:/Users/KristinBietsch/files/PMA2020 Data/Uganda/PMA2020_UGP1_HQFQ_v2.0_21Jul2021/PMA2020_UGP1_HQFQ_v2.0_21Jul2021.dta")
 
-women_clean <- women %>% filter(FRS_result==1 & HHQ_result==1 &  usually_live==1 )
+women_clean <- women %>% filter(!is.na(FQweight) )
 
 # Setup data
 women_clean <- women_clean %>% mutate(sampleweights= FQweight,

@@ -8,8 +8,7 @@ set more off
 
 use "C:\Users\KristinBietsch\files\PMA2020 Data\Uganda\PMA2020_UGP1_HQFQ_v2.0_21Jul2021\PMA2020_UGP1_HQFQ_v2.0_21Jul2021.dta"
 
-keep if FRS_result==1 & HHQ_result==1
-keep if  usually_live==1 
+keep if FQweight!=.
 
 gen married=1 if FQmarital_status==1 | FQmarital_status==2
 replace married=0 if FQmarital_status!=1 & FQmarital_status!=2
