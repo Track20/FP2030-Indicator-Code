@@ -11,7 +11,7 @@ library(DHS.rates)
 library(questionr)
 
 setwd("C:/Users/KristinBietsch/files/DHSLoop")
-women <- read_dta("NGIR7AFL.DTA")
+women <- read_dta("PHIR81FL.DTA")
 
 
 
@@ -50,16 +50,18 @@ women_clean <- women_clean %>% mutate(method=case_when(v312==1 ~ "Pill",
                                                        v312==16 | v312==17 ~ "OMM"))
 
 
-# Method Information Index (MII+ not available for this survey)
+# Method Information Index (and MII+)
 #v3a02 v3a04 (only if v3a02 is yes) v3a05
 women_clean <- women_clean %>% mutate(told_se=case_when(v3a02==1 ~ 1, v3a02!=1 ~ 0),
                                       told_todo_se=case_when(v3a02==1 & v3a04==1 ~ 1, 
                                                              v3a02==1 & v3a04==0 ~ 0,
                                                              v3a02!=1 ~ 0),
                                       told_om = case_when(v3a05==1 ~ 1, v3a05!=1 ~ 0),
+                                      told_switch=case_when(v3a14==1 ~ 1, v3a14==0 ~ 0),
                                       mii=case_when(told_se==1 & told_todo_se==1 & told_om==1 ~ 1,
-                                                    told_se!=1 | told_todo_se!=1 | told_om!=1 ~ 0))
-
+                                                    told_se!=1 | told_todo_se!=1 | told_om!=1 ~ 0),
+                                      mii_plus= case_when(told_se==1 & told_todo_se==1 & told_om==1 & told_switch==1 ~ 1 ,
+                                                          told_se!=1 | told_todo_se!=1 | told_om!=1 | told_switch!=1 ~ 0))
 
 # Percentage of women who received family planning information during a contact with a health service provider
 #v393 v393a v394 v395
@@ -132,8 +134,12 @@ prop.table(wtd.table(x= unmarried$ds, weights = unmarried$sampleweights))
 # Method Mix All Women
 prop.table(wtd.table(x= women_clean$method, weights = women_clean$sampleweights))
 
+# Method Information Index Plus
+prop.table(wtd.table(x= women_clean$mii_plus, weights = women_clean$sampleweights))
 # Method Information Index
 prop.table(wtd.table(x= women_clean$mii, weights = women_clean$sampleweights))
+# Method Information Index Plus by Method (Note, only some methods are asked about MII)
+prop.table(wtd.table(x= women_clean$mii_plus, y=women_clean$method, weights = women_clean$sampleweights),2)
 # Method Information Index by Method (Note, only some methods are asked about MII)
 prop.table(wtd.table(x= women_clean$mii, y=women_clean$method, weights = women_clean$sampleweights),2)
 # Told About Side Effects

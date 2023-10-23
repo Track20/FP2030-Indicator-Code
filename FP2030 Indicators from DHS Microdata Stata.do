@@ -5,7 +5,7 @@
 
 clear all
 set maxvar 10000
-use "C:\Users\KristinBietsch\files\DHS Data\Nigeria\NGIR7AFL.DTA"
+use "C:\Users\KristinBietsch\files\DHS Data\Philippines\PHIR81FL.DTA"
 
 #*Setup data
 gen sampleweights=v005/100000
@@ -47,21 +47,27 @@ replace method = "SDM" if v312==18
 replace method = "OMM" if   v312==16 | v312==17 
 
 
-* Method Information Index (MII+ not available for this survey)
-*v3a02 v3a04 (only if v3a02 is yes) v3a05
+* Method Information Index Plus
+*v3a02 v3a04 (only if v3a02 is yes) v3a05 v3a14
 
 gen told_se=1 if v3a02==1 
-replace told_se=0 if v3a02!=1 & v3a02!=.
+replace told_se=0 if v3a02==0 
 
 gen told_todo_se=1 if v3a02==1 & v3a04==1
 replace told_todo_se=0 if  v3a02==1 & v3a04==0
-replace told_todo_se=0 if  v3a02!=1  & v3a02!=.
+replace told_todo_se=0 if  v3a02==0 
                                   
 gen told_om= 1 if 	v3a05==1
-replace told_om=0 if v3a05!=1	 & v3a05!=.							  
+replace told_om=0 if v3a05==0					  
+
+gen switch=1 if v3a14==1
+replace switch=0 if v3a14==0
                                       
 gen mii=1 if told_se==1 & told_todo_se==1 & told_om==1			
-replace mii=0 if told_se==0 | told_todo_se==0 | told_om==0			  
+replace mii=0 if told_se==0 | told_todo_se==0 | told_om==0		
+
+gen mii_plus=1 if told_se==1 & told_todo_se==1 & told_om==1 & switch==1
+replace mii_plus=0 if told_se==0 | told_todo_se==0 | told_om==0	| switch==0	  	  
                                       
 
 * Percentage of women who received family planning information during a contact with a health service provider
@@ -130,6 +136,10 @@ tab method [aw=sampleweights]
 tab mii [aw=sampleweights]
 * Method Information Index by Method (Note, only some methods are asked about MII)
 tab method mii  [aw=sampleweights], row
+* Method Information Index
+tab mii_plus [aw=sampleweights]
+* Method Information Index by Method (Note, only some methods are asked about MII)
+tab method mii_plus  [aw=sampleweights], row
 * Told About Side Effects
 tab told_se [aw=sampleweights]
 * Told What to Do About Side Effects
@@ -160,7 +170,7 @@ tab decision [aw=sampleweights]
 
 clear all
 set maxvar 10000
-use "C:\Users\KristinBietsch\files\DHS Data\Nigeria\NGIR7AFL.DTA"
+use "C:\Users\KristinBietsch\files\DHS Data\Philippines\PHIR81FL.DTA"
 
 * classifying pregnancy as 0 in birth order
 gen m10_0=v225
@@ -179,10 +189,10 @@ replace b3_00=. if bidx_00==.
 gen id=_n
 reshape long m10_ bidx_0 b3_0, i(id v005 v021 v022) j(var)
 
-* generating age of child (only want to keep those under 5, but dont want to drop those missing m10_ information)
+* generating age of child (only want to keep those under 3, but dont want to drop those missing m10_ information)
 gen age=.
 replace age=v008-b3_0
-drop if age >=60
+drop if age >=36
 
 * making the remaining missings into their own category
 replace m10_=4 if m10_==.
